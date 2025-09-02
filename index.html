@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#2563eb"/>
+  <title>ReflexFit — Reaction + Fitness Tracker</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="assets/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <span class="logo">⚡</span>
+      <span>ReflexFit</span>
+    </div>
+    <div class="xp-bar">
+      <div id="xpFill"></div>
+    </div>
+    <div id="streakBadge" class="streak">🔥 x0</div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab active" data-target="home">Home</button>
+    <button class="tab" data-target="react">React</button>
+    <button class="tab" data-target="log">Log</button>
+    <button class="tab" data-target="stats">Stats</button>
+    <button class="tab" data-target="settings">Settings</button>
+  </nav>
+
+  <main>
+    <!-- HOME -->
+    <section id="home" class="view active">
+      <h1>Welcome 👋</h1>
+      <p>Test your <b>reaction time</b>, log <b>workouts/focus</b>, earn XP and keep a streak.</p>
+      <div class="card">
+        <h3>Today</h3>
+        <div class="today-grid">
+          <div class="today-item">
+            <div class="label">Last Reaction</div>
+            <div id="lastReaction" class="big">—</div>
+          </div>
+          <div class="today-item">
+            <div class="label">Sessions This Week</div>
+            <div id="weekSessions" class="big">0</div>
+          </div>
+          <div class="today-item">
+            <div class="label">Avg Reaction (7d)</div>
+            <div id="avg7d" class="big">—</div>
+          </div>
+          <div class="today-item">
+            <div class="label">XP</div>
+            <div id="xpText" class="big">0 / 200</div>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="primary" data-target="react">Start Reaction Test</button>
+          <button class="ghost" data-target="log">Quick Log</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- REACT -->
+    <section id="react" class="view">
+      <h2>Reaction Test</h2>
+      <p>Wait for <b>green</b>, then tap as fast as you can.</p>
+      <div id="reactPad" class="react-pad idle">
+        <div id="reactText">Tap START</div>
+      </div>
+      <div class="react-controls">
+        <button id="startReact" class="primary">Start</button>
+        <button id="soundToggle" class="ghost">Sound: Off</button>
+        <div id="reactResult" class="result">—</div>
+      </div>
+      <div class="card hint">
+        <b>Tip:</b> If you tap before it turns green, that’s “too soon.” Try to stay calm.
+      </div>
+    </section>
+
+    <!-- LOG -->
+    <section id="log" class="view">
+      <h2>Quick Log</h2>
+      <form id="logForm" class="card form">
+        <label>
+          Type
+          <select id="logType">
+            <option value="workout">Workout</option>
+            <option value="focus">Focus/Study</option>
+            <option value="cardio">Cardio</option>
+            <option value="other">Other</option>
+          </select>
+        </label>
+        <label>
+          Title
+          <input id="logTitle" placeholder="Bench, Math study, Run..." required>
+        </label>
+        <div class="grid2">
+          <label>
+            Minutes
+            <input id="logMins" type="number" min="1" max="300" value="30" required>
+          </label>
+          <label>
+            RPE (effort 1–10)
+            <input id="logRpe" type="number" min="1" max="10" value="7">
+          </label>
+        </div>
+        <label>
+          Notes
+          <textarea id="logNotes" rows="2" placeholder="Felt strong, new PR, sleepy…"></textarea>
+        </label>
+        <button class="primary" type="submit">Save Log</button>
+      </form>
+
+      <div class="card">
+        <h3>Today’s Notes</h3>
+        <div class="grid3">
+          <label>Sleep (hrs) <input id="sleepHrs" type="number" step="0.1" min="0" max="24"></label>
+          <label>Caffeine (cups) <input id="caffCups" type="number" min="0" max="10"></label>
+          <label>Mood (1–5) <input id="mood" type="number" min="1" max="5"></label>
+        </div>
+        <button id="saveDayNotes" class="ghost">Save Day Notes</button>
+      </div>
+
+      <div class="card">
+        <h3>Recent Logs</h3>
+        <ul id="recentLogs" class="list"></ul>
+      </div>
+    </section>
+
+    <!-- STATS -->
+    <section id="stats" class="view">
+      <h2>Stats</h2>
+      <div class="card">
+        <h3>Average Reaction by Day</h3>
+        <canvas id="chartReaction" width="400" height="220"></canvas>
+      </div>
+      <div class="card">
+        <h3>Sessions per Week</h3>
+        <canvas id="chartSessions" width="400" height="220"></canvas>
+      </div>
+      <div class="card">
+        <h3>Training vs Reaction (last 4 weeks)</h3>
+        <canvas id="chartScatter" width="400" height="220"></canvas>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section id="settings" class="view">
+      <h2>Settings & Data</h2>
+      <div class="card">
+        <label>Weekly XP Goal <input id="weeklyGoal" type="number" min="50" max="2000" value="200"></label>
+        <button id="resetData" class="danger">Reset All Data</button>
+      </div>
+      <div class="card">
+        <h3>Export / Import</h3>
+        <div class="grid2">
+          <button id="exportJson" class="ghost">Export JSON</button>
+          <button id="exportCsv" class="ghost">Export CSV</button>
+        </div>
+        <label>
+          Import JSON
+          <textarea id="importArea" rows="3" placeholder='Paste JSON here'></textarea>
+        </label>
+        <button id="importJson" class="primary">Import</button>
+      </div>
+      <div class="card hint">
+        <b>Storage:</b> Data is saved on your device only (localStorage). Clearing Safari data will erase it.
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">v1.0 • Works offline • Install via “Add to Home Screen”</footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
